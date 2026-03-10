@@ -1,5 +1,6 @@
 import httpx
 from fastapi import FastAPI, HTTPException
+from datetime import datetime
 
 NOAA_BASE_URL = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
 
@@ -11,23 +12,21 @@ def root_message():
 
 @app.get("/tides/{station_id}")
 async def get_tide_forecast(station_id: str):
-    """
-    Fetch today's high/low tide predictions for a given NOAA station ID.
-    Example: /tides/8557863
-    """
+    
+    today = datetime.now().strftime("%Y%m%d")
+
     params = {
-        "date": "today",
+        "begin_date": today,
+        "range": 48,
         "station": station_id,
         "product": "predictions",
         "datum": "MLLW",
         "time_zone": "lst_ldt",
         "interval": "hilo",
         "units": "english",
-        "application": "student_project_OSU",
+        "application": "DataAPI_Sample",
         "format": "json",
     }
-
-    print(params)
 
     async with httpx.AsyncClient() as client:
         try:
